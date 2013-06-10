@@ -1,0 +1,9 @@
+{
+  "name": "test_app",
+  "version": "0.1.0",
+  "dependencies": {
+    "bootstrap": "2.3.2",
+    "ember": "1.0.0-rc.4",
+    "jquery": "1.9.x"
+  }
+}

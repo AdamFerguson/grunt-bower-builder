@@ -8,6 +8,8 @@
 
 'use strict';
 
+var bower = require('bower');
+
 module.exports = function(grunt) {
 
   // Please see the Grunt documentation for more information regarding task
@@ -19,6 +21,13 @@ module.exports = function(grunt) {
       punctuation: '.',
       separator: ', '
     });
+
+    var done = this.async();
+    bower.commands.list({sources: true}).
+      on('data', function(data) { console.log(data); }).
+      on('error', function(data) { console.log(data); }).
+      on('list', function(data) { console.log(data); }).
+      on('end', function() { done(); });
 
     // Iterate over all specified file groups.
     this.files.forEach(function(f) {
