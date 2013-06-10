@@ -26,35 +26,27 @@ module.exports = function(grunt) {
     // Before generating any new files, remove any previously-created files.
     clean: {
       tests: ['tmp'],
-      bowerrc: ['.bowerrc']
+      bower: ['bower.json']
     },
 
     copy: {
-      bowerrc: {
-        files: {
-          src: ['test/fixtures/.bowerrc', 'test/fixtures/bower.json'],
-          dest: '/'
-        }
+      bower: {
+        files: [
+          {
+            expand: true,
+            flatten: true, 
+            src: ['test/fixtures/bower.json'],
+            dest: '.'
+          }
+        ]
       }
     },
 
     // Configuration to be run (and then tested).
     bowerBuilder: {
       default_options: {
-        options: {
-        },
-        files: {
-          'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123'],
-        },
-      },
-      custom_options: {
-        options: {
-          separator: ': ',
-          punctuation: ' !!!',
-        },
-        files: {
-          'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123'],
-        },
+        '.js': 'tmp/built.js',
+        '.css': 'tmp/built.css'
       },
     },
 
@@ -78,10 +70,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('bowerInstall', 'Install bower dependencies based on .bowerrc config', function() {
     var done = this.async();
-    bower.commands.install.line().
-    on('error', function(data) { console.log(data); }).
-    on('data', function(data) { console.log(data); }).
-    on('end', function() {
+    bower.commands.install().on('end', function() {
       console.log('bower dependencies installed');
       done();
     });
@@ -89,7 +78,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'copy','bowerInstall','bowerBuilder', 'nodeunit','clean:bowerrc']);
+  grunt.registerTask('test', ['clean', 'copy','bowerInstall','bowerBuilder', 'nodeunit','clean:bower']);
 
 
   // By default, lint and run all tests.

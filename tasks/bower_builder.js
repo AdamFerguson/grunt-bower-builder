@@ -9,6 +9,7 @@
 'use strict';
 
 var bower = require('bower');
+var lodash = require('lodash');
 
 module.exports = function(grunt) {
 
@@ -16,44 +17,40 @@ module.exports = function(grunt) {
   // creation: http://gruntjs.com/creating-tasks
 
   grunt.registerMultiTask('bowerBuilder', 'Build asset files from bower dependencies.', function() {
+    var done = this.async();
+    var self = this;
+
     // Merge task-specific and/or target-specific options with these defaults.
     var options = this.options({
-      punctuation: '.',
-      separator: ', '
+      separator: ';'
     });
 
-    var done = this.async();
     bower.commands.list({sources: true}).
-      on('data', function(data) { console.log(data); }).
-      on('error', function(data) { console.log(data); }).
-      on('list', function(data) { console.log(data); }).
-      on('end', function() { done(); });
+      on('data', function(data) {
+        console.log(data);
+        lodash.keys(data).forEach(function(fileExt) {
+          var src = data[fileExt].filter(function(filepath) {
+            // Warn on and remove invalid source files (if nonull was set).
+            if (!grunt.file.exists(filepath)) {
+              grunt.log.warn('Source file "' + filepath + '" not found.');
+              return false;
+            } else {
+              return true;
+            }
+          }).map(function(filepath) {
+            // Read file source.
+            return grunt.file.read(filepath);
+          }).join(grunt.util.normalizelf(options.separator));
 
-    // Iterate over all specified file groups.
-    this.files.forEach(function(f) {
-      // Concat specified files.
-      var src = f.src.filter(function(filepath) {
-        // Warn on and remove invalid source files (if nonull was set).
-        if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
-          return false;
-        } else {
-          return true;
-        }
-      }).map(function(filepath) {
-        // Read file source.
-        return grunt.file.read(filepath);
-      }).join(grunt.util.normalizelf(options.separator));
+          // Write the destination file.
+          grunt.file.write(self.data[fileExt], src);
 
-      // Handle options.
-      src += options.punctuation;
+          // Print a success message.
+          grunt.log.writeln('File "' + self.data[fileExt] + '" created.');
+        }); // lodash.keys
 
-      // Write the destination file.
-      grunt.file.write(f.dest, src);
+        done();
+      });
 
-      // Print a success message.
-      grunt.log.writeln('File "' + f.dest + '" created.');
-    });
   });
-
 };

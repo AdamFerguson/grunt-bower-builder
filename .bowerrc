@@ -1,6 +1,6 @@
 {
   "directory"  : "tmp/components",
-  "json"       : "test/fixtures/bower.json",
+  "json"       : "bower.json",
   "endpoint"   : "https://bower.herokuapp.com",
   "searchpath" : []
 }

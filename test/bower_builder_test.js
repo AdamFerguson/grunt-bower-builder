@@ -28,21 +28,16 @@ exports.bower_builder = {
     done();
   },
   default_options: function(test) {
-    test.expect(1);
+    test.expect(2);
 
-    var actual = grunt.file.read('tmp/default_options');
-    var expected = grunt.file.read('test/expected/default_options');
-    test.equal(actual, expected, 'should describe what the default behavior is.');
+    var actualJS = grunt.file.read('tmp/built.js');
+    var expectedJS = grunt.file.read('test/expected/built.js');
+    test.equal(actualJS, expectedJS, 'Compiled JS file should match the expected JS file.');
 
-    test.done();
-  },
-  custom_options: function(test) {
-    test.expect(1);
-
-    var actual = grunt.file.read('tmp/custom_options');
-    var expected = grunt.file.read('test/expected/custom_options');
-    test.equal(actual, expected, 'should describe what the custom option(s) behavior is.');
+    var actualCSS = grunt.file.read('tmp/built.css');
+    var expectedCSS = grunt.file.read('test/expected/built.css');
+    test.equal(actualJS, expectedJS, 'Compiled CSS file should match the expected CSS file.');
 
     test.done();
-  },
+  }
 };
